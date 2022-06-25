@@ -89,7 +89,7 @@
                 @endif
 
                 @if ($errors->any())
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger my-3">
                         <ul>
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -210,24 +210,26 @@
                 </a>
             </li>
             @if(auth()->check())
-                <li class="menu-title">
-                    <span>Menu Admin</span>
-                </li>
-                <li>
-                    <a href="{{ route('dashboard.payment-methods.index') }}">
-                        <svg id="lock-file-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5"
-                             width="48" height="48">
-                            <path id="primary" d="M17,7V4a1,1,0,0,0-1-1H5L3,5V20a1,1,0,0,0,1,1H9"
-                                  style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-                            <path id="primary-2" data-name="primary"
-                                  d="M14,15h6a1,1,0,0,1,1,1v4a1,1,0,0,1-1,1H14a1,1,0,0,1-1-1V16A1,1,0,0,1,14,15Zm3-4h0a2,2,0,0,0-2,2v2h4V13A2,2,0,0,0,17,11ZM3,5H5V3Z"
-                                  style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-                        </svg>
-                        Metode Pembayaran
-                    </a>
-                </li>
-                @endif
-                </ul>
+                @if(auth()->user()->role_user == \App\Enums\RoleUserEnum::ROLE_ADMIN)
+                    <li class="menu-title">
+                        <span>Menu Admin</span>
+                    </li>
+                    <li>
+                        <a href="{{ route('dashboard.payment-methods.index') }}">
+                            <svg id="lock-file-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5"
+                                 width="48" height="48">
+                                <path id="primary" d="M17,7V4a1,1,0,0,0-1-1H5L3,5V20a1,1,0,0,0,1,1H9"
+                                      style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+                                <path id="primary-2" data-name="primary"
+                                      d="M14,15h6a1,1,0,0,1,1,1v4a1,1,0,0,1-1,1H14a1,1,0,0,1-1-1V16A1,1,0,0,1,14,15Zm3-4h0a2,2,0,0,0-2,2v2h4V13A2,2,0,0,0,17,11ZM3,5H5V3Z"
+                                      style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+                            </svg>
+                            Metode Pembayaran
+                        </a>
+                    </li>
+                    @endif
+                    @endif
+                    </ul>
         </div>
     </div>
 </div>
