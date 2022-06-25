@@ -1,11 +1,22 @@
 
 # Billers PHP Laravel
 
+------
+
 (SCRIPT MASIH DALAM PEMBUATAN)
 
 Aplikasi penjualan produk PPOB.
 
-### Produk
+### Instalasi
+
+---
+(comming soon)
+
+### PRODUK
+
+-------
+
+**Semua produk prepaid**
 - Pulsa
 - Paket Data
 - E-money
@@ -14,8 +25,14 @@ Aplikasi penjualan produk PPOB.
 - PLN
 - dan lainnya
 
-### Mendukung Metode Pembayaran
+**Semua produk prepaid**
+- masih dalam proses pembuatan
 
+### Metode Pembayaran
+
+----
+
+Saat Ini Sudah Mendukung metode pembayaran yang ada dibawah ini.
 - BUSD (BEP20) - Binance Smartchain	
 - IDK (ERC20) - Ethereum Network	
 - IDK (XLM) - Stellar Lumen	
