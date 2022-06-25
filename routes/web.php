@@ -1,5 +1,6 @@
 <?php
 
+use Fatkulnurk\BillerSdk\Payments\Indodax\IndodaxClient;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,7 +42,7 @@ Route::get('/dashboard', function () {
 Route::group([
     'prefix' => 'dashboard',
     'as' => 'dashboard.',
-    'middleware' => ['auth']
+    'middleware' => ['auth', 'user_role:' . \App\Enums\RoleUserEnum::ROLE_ADMIN]
 ], function () {
     Route::view('/payment-methods', 'dashboard.payment-methods.index')->name('payment-methods.index');
     Route::get('/payment-methods', [\App\Http\Controllers\Dashboard\PaymentMethodController::class, 'index'])

@@ -1,7 +1,8 @@
 <x-guest-layout>
     @section('title', 'Edit Metode Pembayaran')
-    <form action="{{ route('dashboard.payment-methods.update', $paymentMethod->id) }}">
+    <form action="{{ route('dashboard.payment-methods.update', $paymentMethod->id) }}" method="POST">
         @csrf
+        <input type="hidden" name="id" value="{{ $paymentMethod->id }}">
 
         <div class="card w-full bg-base-100 shadow-xl">
             <div class="card-body">
@@ -99,7 +100,6 @@
 
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-
                     <div class="form-control w-full">
                         <label class="label">
                             <span class="label-text">Provider</span>
@@ -126,6 +126,7 @@
                         <label class="label cursor-pointer">
                             <span class="label-text">Random Kode Unik?</span>
                             <input name="is_with_random_amount"
+                                   value="1"
                                    type="checkbox"
                                    @if(old('is_with_random_amount', $paymentMethod->is_with_random_amount)) checked="checked" @endif
                                    class="checkbox"/>
@@ -135,6 +136,7 @@
                         <label class="label cursor-pointer">
                             <span class="label-text">Status Aktif?</span>
                             <input name="is_active"
+                                   value="1"
                                    type="checkbox"
                                    @if(old('is_active', $paymentMethod->is_active)) checked="checked" @endif
                                    class="checkbox"/>

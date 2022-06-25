@@ -15,6 +15,7 @@ class PaymentMethod extends Model
     protected $casts = [
         'provider' => 'integer',
         'is_active' => 'boolean',
+        'is_with_random_amount' => 'boolean',
         'fee_in_percent' => 'float'
     ];
 }

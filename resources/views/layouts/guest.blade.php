@@ -46,7 +46,7 @@
                     </svg>
                     <span class="badge badge-xs badge-primary indicator-item"></span>
                 </div>
-            </button>--}}
+            </button>
 
             <div class="dropdown dropdown-end">
                 <label tabindex="0" class="btn btn-ghost btn-circle avatar">
@@ -65,6 +65,7 @@
                     <li><a href="#">Logout</a></li>
                 </ul>
             </div>
+            --}}
         </div>
     </div>
 
