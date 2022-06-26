@@ -145,7 +145,7 @@ class TransactionService
         if (blank($response) || is_string($response)) {
             TransactionLog::create([
                 'transaction_id' => $transaction->id,
-                'title' => $response ?? 'Tanpa keterangan'
+                'title' => str($response)->limit(30) ?? 'Tanpa keterangan'
             ]);
 
             // jika transaksi gagal diproses lebih dari 24 jam, buat transaksi jadi gagal
