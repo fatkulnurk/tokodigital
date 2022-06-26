@@ -1,6 +1,18 @@
 <x-guest-layout>
-    @section('title', 'Beli Pulsa Online')
+    @section('title', 'Riwayat Transaksi Pembelian ' . $transaction->product_name)
     <div class="w-full">
+        @if($transaction->status == \App\Enums\TransactionStatusEnum::STATUS_SUCCESS)
+            <div class="alert alert-success shadow-lg my-3">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Pembelian pada transaksi ini sudah berhasil. Jika produk yang anda beli membutuhkan KODE untuk di inputkan (seperti pembelian token PLN), silakan periksa kode pada bagian SN (serial number).</span>
+                </div>
+            </div>
+        @endif
         <div class="overflow-x-auto">
             <table class="table table-compact w-full">
                 <tr>
@@ -12,6 +24,11 @@
                     <td class="w-1">ID Transaksi</td>
                     <td class="w-1">:</td>
                     <td>{{ $transaction->id }}</td>
+                </tr>
+                <tr>
+                    <td class="w-1">Kode Produk</td>
+                    <td class="w-1">:</td>
+                    <td>{{ $transaction->product_id }}</td>
                 </tr>
                 <tr>
                     <td class="w-1">Produk</td>
@@ -52,18 +69,6 @@
                 </tr>
             </table>
         </div>
-        @if($transaction->status == \App\Enums\TransactionStatusEnum::STATUS_SUCCESS)
-            <div class="alert alert-success shadow-lg mt-2">
-                <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span>Pembelian pada transaksi ini sudah berhasil. Jika produk yang anda beli membutuhkan KODE untuk di inputkan (seperti pembelian token PLN), silakan periksa kode pada bagian SN (serial number).</span>
-                </div>
-            </div>
-        @endif
         <div class="my-2"></div>
         <div class="overflow-x-auto">
             <table class="table table-compact w-full">

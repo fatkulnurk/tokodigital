@@ -4,6 +4,7 @@ return [
     'platform-fee' => 500,
     'expired_at' => 12, // in hours
     'api' => [
+        'base_url' => env('BILLER_BASE_URL', ''),
         'token' => env('BILLER_TOKEN', ''),
         'merchant_id' => env('BILLER_MERCHANT_ID', '')
     ],

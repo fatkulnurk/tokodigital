@@ -9,6 +9,7 @@ use App\Mail\TransactionDelivered;
 use App\Mail\TransactionExpired;
 use App\Mail\TransactionPaid;
 use App\Models\Transaction;
+use App\Models\TransactionLog;
 use App\Services\PaymentMethods\PaymentMethodService;
 use App\Services\Products\ProductService;
 use Fatkulnurk\BillerSdk\Payments\Payment;
@@ -88,16 +89,25 @@ class TransactionService
 
     public function checkStatus(Transaction $transaction)
     {
-        switch ($transaction->status) {
-            case TransactionStatusEnum::STATUS_WAITING_PAYMENT:
-                $paymentService = (new Payment());
-                $paymentMethod = $transaction->paymentMethod;
-                $paymentProvider = $paymentService->getProvider($paymentMethod);
-                $paymentService->setPayment($paymentProvider);
-                $response = $paymentService->checkStatusPayment($transaction, $paymentMethod);
+        if ($transaction->status == TransactionStatusEnum::STATUS_WAITING_PAYMENT) {
+            $paymentService = (new Payment());
+            $paymentMethod = $transaction->paymentMethod;
+            $paymentProvider = $paymentService->getProvider($paymentMethod);
+            $paymentService->setPayment($paymentProvider);
+            $response = $paymentService->checkStatusPayment($transaction, $paymentMethod);
 
-                $transaction->refresh();
+            // update ORM
+            $transaction->refresh();
 
+            if ($transaction->status == TransactionStatusEnum::STATUS_WAITING_PAYMENT) {
+                // pembayaran sudah expired
+                if ($transaction->transactionPayment->expired_at < now()->timestamp) {
+                    $transaction->status = TransactionStatusEnum::STATUS_FAILED;
+                    $transaction->save();
+
+                    $response = $transaction;
+                }
+            } elseif ($transaction->status == TransactionStatusEnum::STATUS_PROCESS) {
                 // kirim email ketika pembayaran berhasil
                 try {
                     if ($transaction->cc_type == CCTypeEnum::CC_TYPE_EMAIL) {
@@ -106,12 +116,15 @@ class TransactionService
                 } catch (\Exception $exception) {
                 }
 
-                break;
-            case TransactionStatusEnum::STATUS_PROCESS:
+                // ketika pembayaran sukses
                 $response = $this->createOrderToProvider($transaction);
-                break;
-            default:
-                $response = [];
+            }
+        }
+
+        // meski terkadang tidak digunakan
+        // ketika pembayaran sukses
+        if ($transaction->status == TransactionStatusEnum::STATUS_PROCESS) {
+            $response = $this->createOrderToProvider($transaction);
         }
 
         return $response;
@@ -120,29 +133,64 @@ class TransactionService
     public function createOrderToProvider(Transaction $transaction)
     {
         $paymentPoint = (new PaymentPoint());
-        $response = $paymentPoint->order(
-            $transaction->product_id,
-            $transaction->target
-        );
 
-        if(blank($response)) {
+        // jika reff masih kosong, lakukan order
+        if (blank($transaction->reff_id)) {
+            $response = $paymentPoint->order($transaction->product_id, $transaction->target);
+        } else {
+            // Cek transaksi aja
+            $response = $paymentPoint->checkTransaction($transaction->reff_id);
+        }
+
+        // selama response kosong atau berupa string
+        if (blank($response) || is_string($response)) {
+            TransactionLog::create([
+                'transaction_id' => $transaction->id,
+                'title' => $response ?? 'Tanpa keterangan'
+            ]);
+
             // jika transaksi gagal diproses lebih dari 24 jam, buat transaksi jadi gagal
             return $transaction;
         }
 
-        $transaction->status = TransactionStatusEnum::STATUS_SUCCESS;
-        $transaction->sn = optional($response)['sn'];
-        $transaction->reply = json_encode($response);
-        $transaction->reff_id = optional($response)['id'];
-        $transaction->save();
+        if (!is_string($response)) {
+            switch ($response['status']) {
+                case 0: // sedang di proses
+                    $transaction->reff_id = optional($response)['id'];
+                    break;
+                case 1: // berhasil
+                    $transaction->reff_id = optional($response)['id'];
+                    $transaction->status = TransactionStatusEnum::STATUS_SUCCESS;
+                    $transaction->sn = optional($response)['sn'];
 
-        // kirim email ketika transaksi sukses
-        try {
-            if ($transaction->cc_type == CCTypeEnum::CC_TYPE_EMAIL) {
-                Mail::queue(new TransactionDelivered($transaction));
+                    // kirim email ketika transaksi sukses
+                    try {
+                        if ($transaction->cc_type == CCTypeEnum::CC_TYPE_EMAIL) {
+                            Mail::queue(new TransactionDelivered($transaction));
+                        }
+                    } catch (\Exception $exception) {
+
+                    }
+
+                    TransactionLog::create([
+                        'transaction_id' => $transaction->id,
+                        'title' => 'Transaksi berhasil',
+                        'data' => $response
+                    ]);
+
+                    break;
+                case 2: // Gagal (lakukan reset sn, agar order ulang)
+                    $transaction->reff_id = null;
+                    TransactionLog::create([
+                        'transaction_id' => $transaction->id,
+                        'title' => 'Transaksi Gagal',
+                        'data' => $response
+                    ]);
+                    break;
             }
-        } catch (\Exception $exception) {
 
+            $transaction->reply = json_encode($response);
+            $transaction->save();
         }
 
         return $transaction;
