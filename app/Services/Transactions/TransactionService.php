@@ -6,7 +6,6 @@ use App\Enums\CCTypeEnum;
 use App\Enums\TransactionStatusEnum;
 use App\Mail\TransactionCreated;
 use App\Mail\TransactionDelivered;
-use App\Mail\TransactionExpired;
 use App\Mail\TransactionPaid;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
@@ -155,10 +154,10 @@ class TransactionService
 
         if (!is_string($response)) {
             switch ($response['status']) {
-                case 0: // sedang di proses
+                case 1: // sedang di proses
                     $transaction->reff_id = optional($response)['id'];
                     break;
-                case 1: // berhasil
+                case 2: // berhasil
                     $transaction->reff_id = optional($response)['id'];
                     $transaction->status = TransactionStatusEnum::STATUS_SUCCESS;
                     $transaction->sn = optional($response)['sn'];
@@ -179,7 +178,7 @@ class TransactionService
                     ]);
 
                     break;
-                case 2: // Gagal (lakukan reset sn, agar order ulang)
+                case 3: // Gagal (lakukan reset sn, agar order ulang)
                     $transaction->reff_id = null;
                     TransactionLog::create([
                         'transaction_id' => $transaction->id,
