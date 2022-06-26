@@ -20,6 +20,8 @@ Route::get('/', function (\App\Services\PaymentMethods\PaymentMethodService $pay
     return view('welcome', compact('paymentMethods'));
 });
 
+Route::get('/cron-job', \App\Http\Controllers\CronController::class)->name('cron-job');
+
 Route::group([
     'prefix' => 'products',
     'as' => 'products.'
