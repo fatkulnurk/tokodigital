@@ -34,8 +34,10 @@
                     @foreach($products as $productType)
                         <optgroup label="{{ $productType['type_slug'] }}">
                             @foreach($productType['products'] as $product)
-                                <option value="{{ optional($product)->id }}">{{ optional($product)->name }}
-                                    - {{ to_rupiah(optional($product)->price) }}</option>
+                                <option value="{{ optional($product)->id }}"
+                                        @if(!$product->is_available) disabled @endif>
+                                    {{ optional($product)->name }} - {{ to_rupiah(optional($product)->price) }}
+                                </option>
                             @endforeach
                         </optgroup>
                     @endforeach

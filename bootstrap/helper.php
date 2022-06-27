@@ -20,6 +20,10 @@ if (!function_exists('terbilang')) {
     function terbilang($x) {
         $angka = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
 
+        if ($x < 0) {
+            return "";
+        }
+        
         if ($x < 12)
             return " " . $angka[$x];
         elseif ($x < 20)
