@@ -62,11 +62,14 @@
                         <td class="bg">{{ to_wib($transaction->transactionPayment->paid_at) }}</td>
                     </tr>
                 @endif
-                <tr>
-                    <td class="w-1 bg-warning">SN (serial number)</td>
-                    <td class="w-1">:</td>
-                    <td class="bg-warning">{{ $transaction->sn ?? 'Masih belum tersedia, akan tersedia jika transaksi telah berhasil' }}</td>
-                </tr>
+
+                @if($transaction->status == \App\Enums\TransactionStatusEnum::STATUS_SUCCESS)
+                    <tr>
+                        <td class="w-1 bg-warning">SN (serial number)</td>
+                        <td class="w-1">:</td>
+                        <td class="bg-warning">{{ $transaction->sn ?? 'Masih belum tersedia, akan tersedia jika transaksi telah berhasil' }}</td>
+                    </tr>
+                @endif
             </table>
         </div>
         <div class="my-2"></div>
@@ -109,22 +112,18 @@
                         </tr>
                     @endif
                     <tr>
-                        <td class="w-1 bg-error">Batas Pembayaran</td>
-                        <td class="w-1 bg-error">:</td>
-                        <td class="bg-error">{{ to_wib($transaction->transactionPayment->expired_at) }} (Jangan melebihi
+                        <td class="w-1">Batas Pembayaran</td>
+                        <td class="w-1">:</td>
+                        <td class="text-error underline">{{ to_wib($transaction->transactionPayment->expired_at) }} (Jangan melebihi
                             waktu tersebut)
                         </td>
                     </tr>
                 @endif
                 <tr>
-                    <td class="w-1 bg-info">Total</td>
-                    <td class="w-1 bg-info">:</td>
+                    <td class="w-1">Total</td>
+                    <td class="w-1">:</td>
                     <td class="bg-info">
-                        @if ($transaction->transactionPayment->currency == 'IDR')
-                            {{ to_rupiah($transaction->transactionPayment->total) }}
-                        @else
-                            {{ $transaction->transactionPayment->total }} {{ $transaction->transactionPayment->currency }}
-                        @endif
+                        {{ round($transaction->transactionPayment->total, 8) }} {{ $transaction->transactionPayment->currency }} ({{ terbilang_decimal($transaction->transactionPayment->total) }})
                     </td>
                 </tr>
             </table>
@@ -143,12 +142,13 @@
                     @if($transaction->status == \App\Enums\TransactionStatusEnum::STATUS_WAITING_PAYMENT)
                         <li class="text-error">Silakan lakukan transfer
                             sebesar {{ $transaction->transactionPayment->total }} {{ $transaction->transactionPayment->currency }}
-                            (HARUS SAMA) .
+                            ({{ terbilang_decimal($transaction->transactionPayment->total) }}) .
                         </li>
                         <li class="text-error">Pembayaran berlaku
                             s/d {{ to_wib($transaction->transactionPayment->expired_at) }}</li>
                     @endif
-                    <li>Kesalahan jumlah transfer akan menyebabkan transaksi tidak otomatis bahkan gagal.</li>
+                    <li>Pastikan Jumlah Transfer anda sama persis (termasuk koma jika tersedia). </li>
+                        <li>Kesalahan jumlah transfer akan menyebabkan transaksi tidak otomatis bahkan gagal.</li>
                     <li>Jika ada masalah, harap menghubungi kami.</li>
                     <li>Pembayaran diterima otomatis terkadang bisa mengalami keterlambatan sampai 1 jam setelah
                         transfer.
