@@ -141,7 +141,7 @@
                 <ul>
                     @if($transaction->status == \App\Enums\TransactionStatusEnum::STATUS_WAITING_PAYMENT)
                         <li class="text-error">Silakan lakukan transfer
-                            sebesar {{ $transaction->transactionPayment->total }} {{ $transaction->transactionPayment->currency }}
+                            sebesar {{ round($transaction->transactionPayment->total, 8) }} {{ $transaction->transactionPayment->currency }}
                             ({{ terbilang_decimal($transaction->transactionPayment->total) }}) .
                         </li>
                         <li class="text-error">Pembayaran berlaku
