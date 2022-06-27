@@ -72,9 +72,14 @@
     <div class="bg-gradient-to-b from-pink-50 to-purple-200">
         <main class="w-full mx-auto min-h-screen">
             <div class="p-1">
-                {{--                    <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">--}}
-                {{--                        @yield('title')--}}
-                {{--                    </h2>--}}
+                @if(!request()->routeIs('index'))
+                    <div class="text-sm breadcrumbs">
+                        <ul>
+                            <li><a href="/?ref=breancrumbs">Home</a></li>
+                            <li>@yield('title')</li>
+                        </ul>
+                    </div>
+                @endif
 
                 @if(session('failed'))
                     <div class="alert alert-error my-3">
@@ -184,7 +189,7 @@
                 <span>Menu Lainnya</span>
             </li>
             <li>
-                <a href="#">
+                <a href="/pages/contact-us">
                     <svg id="call-out" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" width="48"
                          height="48">
                         <path id="primary"
@@ -197,7 +202,7 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="/pages/tos">
                     <svg id="lock-file-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5"
                          width="48" height="48">
                         <path id="primary" d="M17,7V4a1,1,0,0,0-1-1H5L3,5V20a1,1,0,0,0,1,1H9"
@@ -227,15 +232,31 @@
                             Metode Pembayaran
                         </a>
                     </li>
+                    <div tabindex="0" class="collapse collapse-arrow">
+                        <input type="checkbox" class="peer"/>
+                        <div class="collapse-title font-medium">
+                            Kelola Halaman
+                        </div>
+                        <div class="collapse-content">
+                            @foreach($pages as $page)
+                                <li>
+                                    <a href="{{ route('dashboard.pages.edit', $page->id) }}">
+                                        {{ $page->title }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
                 <li>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="btn btn-block btn-primary btn-sm">Logout</button>
                     </form>
                 </li>
-                    @endif
-                    @endif
-                    </ul>
+
+                @endif
+                </ul>
         </div>
     </div>
 </div>

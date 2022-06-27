@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\PaymentMethodGroupEnum;
 use App\Enums\PaymentMethodProviderEnum;
 use App\Enums\RoleUserEnum;
+use App\Models\Page;
 use App\Models\PaymentMethod;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -595,6 +596,24 @@ class DatabaseSeeder extends Seeder
 
         foreach ($paymentMethods as $paymentMethod) {
             PaymentMethod::create($paymentMethod);
+        }
+
+
+        $pages = [
+            [
+                'title' => 'Hubungi Kami',
+                'slug' => 'contact-us',
+                'content' => ''
+            ],
+            [
+                'title' => 'Ketentuan Layanan',
+                'slug' => 'tos',
+                'content' => ''
+            ]
+        ];
+
+        foreach ($pages as $page) {
+            Page::create($page);
         }
     }
 }

@@ -18,9 +18,10 @@ Route::get('/', function (\App\Services\PaymentMethods\PaymentMethodService $pay
     $paymentMethods = $paymentMethodService->getAll();
 
     return view('welcome', compact('paymentMethods'));
-});
+})->name('index');
 
 Route::get('/cron-job', \App\Http\Controllers\CronController::class)->name('cron-job');
+Route::get('/pages/{slug}', \App\Http\Controllers\PageController::class)->name('pages.show');
 
 Route::group([
     'prefix' => 'products',
@@ -46,13 +47,15 @@ Route::group([
     'as' => 'dashboard.',
     'middleware' => ['auth', 'user_role:' . \App\Enums\RoleUserEnum::ROLE_ADMIN]
 ], function () {
-    Route::view('/payment-methods', 'dashboard.payment-methods.index')->name('payment-methods.index');
+    Route::view('/payment-methods', 'dashboard.payment-methods.index')
+        ->name('payment-methods.index');
     Route::get('/payment-methods', [\App\Http\Controllers\Dashboard\PaymentMethodController::class, 'index'])
         ->name('payment-methods.index');
     Route::get('/payment-methods/{id}', [\App\Http\Controllers\Dashboard\PaymentMethodController::class, 'edit'])
         ->name('payment-methods.edit');
     Route::post('/payment-methods/{id}', [\App\Http\Controllers\Dashboard\PaymentMethodController::class, 'update'])
         ->name('payment-methods.update');
+    Route::resource('/pages', \App\Http\Controllers\Dashboard\PageController::class)->only(['edit', 'update']);
 });
 
 require __DIR__.'/auth.php';
