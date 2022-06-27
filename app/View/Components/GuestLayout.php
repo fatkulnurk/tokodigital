@@ -17,7 +17,7 @@ class GuestLayout extends Component
      */
     public function render()
     {
-        $categories = cache()->remember('categories', 600, function () {
+        $categories = cache()->remember('categories', 10, function () {
            return (new ProductService())->getCategories();
         });
 
