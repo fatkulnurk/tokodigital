@@ -17,8 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function (\App\Services\PaymentMethods\PaymentMethodService $paymentMethodService) {
     $paymentMethods = $paymentMethodService->getAll();
 
-    return terbilang_decimal("0.99107159");
-
     return view('welcome', compact('paymentMethods'));
 })->name('index');
 
