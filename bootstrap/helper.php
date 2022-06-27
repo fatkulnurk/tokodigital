@@ -12,6 +12,10 @@ if (!function_exists('terbilang_decimal')) {
             $result = " koma" . terbilang($floatStr);
         }
 
+        if ($float < 1) {
+            return "nol " . $result;
+        }
+
         return terbilang($x) . $result;
     }
 }
@@ -20,10 +24,6 @@ if (!function_exists('terbilang')) {
     function terbilang($x) {
         $angka = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
 
-        if ($x < 0) {
-            return "";
-        }
-        
         if ($x < 12)
             return " " . $angka[$x];
         elseif ($x < 20)
